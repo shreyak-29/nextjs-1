@@ -39,11 +39,11 @@ const RestaurantDetails = () => {
           description: 'A fun, vibrant place for Indian food.',
           image: 'https://imgs.search.brave.com/03ysq-K83FfcaqBgWKCAYCSmFdYGkifGJXFaBsnDut8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA4LzYwLzg4Lzg1/LzM2MF9GXzg2MDg4/ODU2M19UbnJITGVV/V2VDZFpjVElESXpq/dE8yOVp4NkxPUFJS/bC5qcGc',
           rating: 4.3,
-          cuisine: 'Mexican',
+          cuisine: 'Indian',
           location: 'Parel',
           openingHours: '10 AM - 11 PM',
           averagePrice: '₹1000 for two',
-          menu: ['Tacos', 'Burritos', 'Quesadillas'],
+          menu: ['Chicken Tikka', 'Paneer Makhani', 'Butter Naan'],
         },
         {
           id: 4,

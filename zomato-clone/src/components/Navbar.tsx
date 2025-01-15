@@ -49,7 +49,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <div className="text-2xl font-bold text-red-500 transition-transform duration-300 hover:scale-105">
-            Zomato
+            Zomato-Clone
           </div>
         </div>
 
