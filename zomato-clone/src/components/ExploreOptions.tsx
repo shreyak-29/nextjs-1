@@ -8,8 +8,8 @@ const ExploreOptions: React.FC = () => {
   };
 
   const sections = [
-    { title: 'Popular Cuisines Near Me', content: 'List of popular cuisines near your location.' },
-    { title: 'Popular Restaurant Types Near Me', content: 'Explore different types of restaurants near you.' },
+    { title: 'Popular Cuisines ', content: 'List of popular cuisines.' },
+    { title: 'Popular Restaurant ', content: 'Explore different types of restaurants.' },
     { title: 'Top Restaurant Chains', content: 'Discover the top restaurant chains in your city.' },
     { title: 'Cities We Deliver To', content: 'Check the cities where we provide delivery services.' },
   ];

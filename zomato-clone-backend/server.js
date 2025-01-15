@@ -15,5 +15,7 @@ app.use(bodyParser.json());
 // Use auth routes
 app.use('/api/auth', authRoutes);
 
+// Use restaurant routes
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

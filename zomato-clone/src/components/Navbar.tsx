@@ -28,8 +28,9 @@ const Navbar = () => {
   // Define navigation items with corresponding routes
   const navItems = [
     { name: 'Home', route: '/' },
+    { name: 'Restaurant', route: '/restaurant' }, // New Restaurant page link
+
     
-    { name: 'Restaurants', route: '/restaurants' }, // Add restaurant route
     
   ];
 
