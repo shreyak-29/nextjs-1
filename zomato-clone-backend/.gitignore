@@ -1,0 +1,46 @@
+# Node.js dependencies
+/node_modules/
+
+# Environment files
+.env
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# npm package-lock files (optional, but useful to avoid conflicts)
+package-lock.json
+yarn.lock
+
+# Build directories
+/dist
+/build
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor directories
+.idea/
+.vscode/
+
+# Coverage directory (for test coverage reports)
+coverage/
+
+# Temporary files
+*.swp
+*.swo
+*.bak
+
+# Debug/trace logs
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Other environment specific files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
