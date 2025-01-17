@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 connectDB();
@@ -15,7 +16,9 @@ app.use(bodyParser.json());
 // Use auth routes
 app.use('/api/auth', authRoutes);
 
-// Use restaurant routes
+// Use review routes
+app.use('/api/reviews', reviewRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

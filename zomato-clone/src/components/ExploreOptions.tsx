@@ -8,35 +8,47 @@ const ExploreOptions: React.FC = () => {
   };
 
   const sections = [
-    { title: 'Popular Cuisines ', content: 'List of popular cuisines.' },
-    { title: 'Popular Restaurant ', content: 'Explore different types of restaurants.' },
-    { title: 'Top Restaurant Chains', content: 'Discover the top restaurant chains in your city.' },
-    { title: 'Cities We Deliver To', content: 'Check the cities where we provide delivery services.' },
+    { 
+      title: 'Popular Cuisines', 
+      content: 'Explore a wide variety of cuisines like Italian, Chinese, Mexican, and Indian. Our platform offers something for every taste!'
+    },
+    { 
+      title: 'Popular Restaurants', 
+      content: 'Discover top-rated restaurants such as The Olive Garden, Five Guys, and local favorites. Find the best dining experiences near you.'
+    },
+    { 
+      title: 'Top Restaurant Chains', 
+      content: 'Our top restaurant chains include McDonald\'s, Subway, Burger King, and many others. Enjoy great food at any of their locations.'
+    },
+    { 
+      title: 'Cities We Deliver To', 
+      content: 'We deliver to major cities including Mumbai, Delhi, Banglore, and Chennai. Explore delivery options in your area.'
+    },
   ];
 
   return (
-    <section className="explore-section bg-gray-100 py-12">
-      <div className="container mx-auto px-6">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+    <section className="explore-section bg-gray-50 py-12">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <h2 className="text-4xl font-semibold mb-8 text-gray-900 text-center">
           Explore Options Near Me
         </h2>
         <div className="space-y-4">
           {sections.map((section) => (
             <div
               key={section.title}
-              className="border rounded-md overflow-hidden"
+              className="border rounded-lg overflow-hidden shadow-md transform transition-all hover:scale-105 hover:shadow-sm"
             >
               <button
-                className="w-full text-left px-4 py-3 flex justify-between items-center bg-white text-gray-800 font-medium focus:outline-none"
+                className="w-full text-left px-6 py-4 flex justify-between items-center bg-white text-gray-900 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-black-500"
                 onClick={() => toggleSection(section.title)}
               >
-                {section.title}
-                <span className={`transform transition-transform ${openSection === section.title ? 'rotate-180' : ''}`}>
+                <span className="text-lg">{section.title}</span>
+                <span className={`transform transition-transform text-xl ${openSection === section.title ? 'rotate-180' : ''}`}>
                   ▼
                 </span>
               </button>
               {openSection === section.title && (
-                <div className="px-4 py-2 bg-gray-50 text-gray-600">
+                <div className="px-6 py-4 bg-gray-50 text-gray-700 text-base">
                   {section.content}
                 </div>
               )}
