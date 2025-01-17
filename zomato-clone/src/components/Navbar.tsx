@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeItem, setActiveItem] = useState('Home');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Track login status
   const router = useRouter();
 
@@ -29,9 +28,6 @@ const Navbar = () => {
   const navItems = [
     { name: 'Home', route: '/' },
     { name: 'Restaurant', route: '/restaurant' }, // New Restaurant page link
-
-    
-    
   ];
 
   // Handle Logout
@@ -81,29 +77,30 @@ const Navbar = () => {
           z-40 p-4 md:p-0
         `}>
           {navItems.map(({ name, route }) => (
-            <li 
+            <li
               key={name}
               className="relative group mb-2 md:mb-0"
-              onClick={() => {
-                setActiveItem(name);
-                router.push(route); // Redirect to the specified route
-              }}
+              onClick={() => router.push(route)} // Redirect to the specified route
             >
-              <a className={`
-                block py-2 md:py-1 px-3 md:px-0
-                transition-colors duration-300
-                hover:text-red-500 cursor-pointer
-                ${activeItem === name ? 'text-red-500' : 'text-gray-700'}
-              `}>
+              <a
+                className={`
+                  block py-2 md:py-1 px-3 md:px-0
+                  transition-colors duration-300
+                  hover:text-red-500 cursor-pointer
+                  ${router.pathname === route ? 'text-red-500' : 'text-gray-700'}
+                `}
+              >
                 {name}
               </a>
-              <div className={`
-                absolute bottom-0 left-0 w-full h-0.5
-                transform scale-x-0 group-hover:scale-x-100
-                transition-transform duration-300
-                bg-red-500
-                ${activeItem === name ? 'scale-x-100' : ''}  
-              `}/>
+              <div
+                className={`
+                  absolute bottom-0 left-0 w-full h-0.5
+                  transform scale-x-0 group-hover:scale-x-100
+                  transition-transform duration-300
+                  bg-red-500
+                  ${router.pathname === route ? 'scale-x-100' : ''}
+                `}
+              />
             </li>
           ))}
         </ul>

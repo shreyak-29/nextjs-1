@@ -50,8 +50,9 @@ exports.deleteReview = async (req, res) => {
     if (review.user.toString() !== req.user.id) {
       return res.status(403).json({ success: false, message: 'Unauthorized to delete this review' });
     }
+    
+    await Review.deleteOne({ _id: id });
 
-    await review.remove();
     res.status(200).json({ success: true, message: 'Review deleted successfully' });
   } catch (error) {
     console.error('Error deleting review:', error.message);
