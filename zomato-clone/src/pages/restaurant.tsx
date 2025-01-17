@@ -4,7 +4,7 @@ import Restaurant from '../components/Restaurant';
 const LoginPage = () => {
   return (
     <div>
-      <Restaurant /> {/* Render the Login component */}
+      <Restaurant /> {/* Render the restuarant component */}
     </div>
   );
 };

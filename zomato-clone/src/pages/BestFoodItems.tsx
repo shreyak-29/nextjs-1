@@ -1,10 +1,10 @@
 import React from 'react';
-import BestFoodItems from '../components/BestFoodItems'; // Import the Login component
+import BestFoodItems from '../components/BestFoodItems'; // Import the best food component
 
 const BestFood = () => {
   return (
     <div>
-      <BestFood/> {/* Render the Login component */}
+      <BestFood/> {/* Render the best food component */}
     </div>
   );
 };
