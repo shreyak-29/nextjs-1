@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from './Navbar';
 
 const Restaurant = () => {
   const router = useRouter();
 
-  const restaurantData = [
+  // Hardcoded data for restaurants
+  const hardcodedRestaurantData = [
     {
       id: 1,
       name: 'The Italian Bistro',
@@ -67,6 +69,18 @@ const Restaurant = () => {
     },
   ];
 
+  // State to store combined data (hardcoded + localStorage data)
+  const [restaurants, setRestaurants] = useState(hardcodedRestaurantData);
+
+  // Fetch restaurants from localStorage on component mount
+  useEffect(() => {
+    const storedRestaurants = JSON.parse(localStorage.getItem('restaurants') || '[]');
+    setRestaurants((prevRestaurants) => [
+      ...prevRestaurants,
+      ...storedRestaurants, // Add new restaurants to the list
+    ]);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -76,12 +90,19 @@ const Restaurant = () => {
           Discover Great Restaurants
         </h1>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-          Explore our curated selection of the finest dining establishments
-          across the city
+          Explore our curated selection of the finest dining establishments across the city
         </p>
+        <div className="flex justify-center">
+          <button
+            onClick={() => router.push('/add-restaurant')}
+            className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600"
+          >
+            Add a New Restaurant
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {restaurantData.map((restaurant) => (
+          {restaurants.map((restaurant) => (
             <div
               key={restaurant.id}
               className="group bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
@@ -91,7 +112,7 @@ const Restaurant = () => {
                   src={restaurant.image}
                   alt={restaurant.name}
                   className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy" // Added lazy loading
+                  loading="lazy"
                 />
                 <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full shadow-md">
                   <div className="flex items-center gap-1">
@@ -140,10 +161,7 @@ const Restaurant = () => {
 
                 <button
                   onClick={() => router.push(`/restaurant/${restaurant.id}`)}
-                  className="w-full px-6 py-3 bg-red-500 text-white font-medium rounded-lg 
-             transition-all duration-300 transform hover:bg-red-600 
-             active:scale-95 focus:outline-none focus:ring-2 
-             focus:ring-red-500 focus:ring-opacity-50"
+                  className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 w-full"
                 >
                   View Details
                 </button>
