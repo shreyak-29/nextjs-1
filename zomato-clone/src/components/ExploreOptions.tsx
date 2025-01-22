@@ -27,7 +27,7 @@ const ExploreOptions: React.FC = () => {
   ];
 
   return (
-    <section className="explore-section bg-gray-50 py-12">
+    <section className="explore-section bg-gray-50 py-4">
       <div className="container mx-auto px-6 max-w-4xl">
         <h2 className="text-4xl font-semibold mb-8 text-gray-900 text-center">
           Explore Options Near Me

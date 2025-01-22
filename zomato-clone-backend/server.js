@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const reviewRoutes = require('./routes/reviewRoutes');
+const restaurantRoutes = require('./routes/restaurantRoutes'); // Import the restaurant routes
+
 
 dotenv.config();
 connectDB();
@@ -18,6 +20,10 @@ app.use('/api/auth', authRoutes);
 
 // Use review routes
 app.use('/api/reviews', reviewRoutes);
+
+app.use('/api/restaurants', restaurantRoutes);  // Add this line for restaurant routes
+
+
 
 
 const PORT = process.env.PORT || 5000;
