@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const reviewRoutes = require('./routes/reviewRoutes');
+const mongoose = require('mongoose');
 const restaurantRoutes = require('./routes/restaurantRoutes'); // Import the restaurant routes
 
 

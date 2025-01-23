@@ -1,4 +1,6 @@
 const Restaurant = require('../models/restaurantModel');  // Import the Restaurant model
+const mongoose = require('mongoose');
+
 
 // Get all restaurants
 const getRestaurants = async (req, res) => {
@@ -21,12 +23,14 @@ const createRestaurant = async (req, res) => {
   }
 };
 
+
 // Update a restaurant
 const updateRestaurant = async (req, res) => {
   try {
-    const restaurant = await Restaurant.findById(req.params.id);
+    const { id } = req.params; // Use route parameter
+    const restaurant = await Restaurant.findById(id); // Find by route parameter
     if (restaurant) {
-      Object.assign(restaurant, req.body);
+      Object.assign(restaurant, req.body); // Update fields
       const updatedRestaurant = await restaurant.save();
       res.json(updatedRestaurant);
     } else {
@@ -36,6 +40,25 @@ const updateRestaurant = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+// Get a single restaurant by ID
+
+const getRestaurantById = async (req, res) => {
+  try {
+    const { id } = req.params; // Use the ID from the URL params
+    const restaurant = await Restaurant.findById(id); // Find restaurant by ID
+
+    if (restaurant) {
+      res.json(restaurant);
+    } else {
+      res.status(404).json({ message: 'Restaurant not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // Delete a restaurant
 const deleteRestaurant = async (req, res) => {
@@ -48,7 +71,7 @@ const deleteRestaurant = async (req, res) => {
     }
 
     // Find and remove the restaurant by ID
-    const restaurant = await Restaurant.findByIdAndRemove(id);
+    const restaurant = await Restaurant.findByIdAndDelete(id);
 
     if (restaurant) {
       res.json({ message: 'Restaurant removed successfully' });
@@ -57,7 +80,7 @@ const deleteRestaurant = async (req, res) => {
     }
   } catch (error) {
     // Log the error for debugging
-    console.error('Error deleting restaurant:', { id: req.params.id, error: error.message });
+    console.error('Error deleting restaurant:', { id: req.body.id, error: error.message });
 
     // Return a generic error response
     res.status(500).json({ message: 'Failed to delete restaurant' });
@@ -66,19 +89,7 @@ const deleteRestaurant = async (req, res) => {
 
 
 
-// Get a single restaurant by ID
-const getRestaurantById = async (req, res) => {
-  try {
-    const restaurant = await Restaurant.findById(req.params.id);
-    if (restaurant) {
-      res.json(restaurant);
-    } else {
-      res.status(404).json({ message: 'Restaurant not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+
 
 // Export all functions using CommonJS
 module.exports = {

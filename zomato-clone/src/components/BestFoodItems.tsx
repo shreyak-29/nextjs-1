@@ -37,12 +37,12 @@ const BestFoodOptions = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 px-4">
-      <div className="max-w-full mx-auto">
+    <div className="min-h-full max-w-auto bg-gray-50 p-8 items-center justify-center">
+      <div className="max-w-auto mx-auto py-30">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">
           Our Best Food Options
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-5 gap-y-6 justify-items-center">
           {foodItems.map((food, index) => (
             <div
               key={index}

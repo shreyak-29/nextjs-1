@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +46,9 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <div className="text-2xl font-bold text-red-500 transition-transform duration-300 hover:scale-105">
+          <Link href={"/"}>
             Zomato-Clone
+          </Link>
           </div>
         </div>
 

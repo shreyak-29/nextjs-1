@@ -60,3 +60,32 @@ exports.deleteReview = async (req, res) => {
   }
 };
 
+exports.updateReview = async (req, res) => {
+  const { id } = req.params;
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).json({ success: false, message: 'Content is required' });
+  }
+
+  try {
+    const review = await Review.findById(id);
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: 'Review not found' });
+    }
+
+    // Check if the logged-in user is the owner of the review
+    if (review.user.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Unauthorized to update this review' });
+    }
+
+    review.content = content;
+    await review.save();
+
+    res.status(200).json({ success: true, review: review });
+  } catch (error) {
+    console.error('Error updating review:', error.message);
+    res.status(500).json({ success: false, message: 'Failed to update review', error });
+  }
+};
