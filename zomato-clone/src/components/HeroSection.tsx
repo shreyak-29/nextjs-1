@@ -59,7 +59,7 @@ const HeroSection = () => {
 
           {/* Enhanced Search Bar */}
           <div className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
+            <div className="relative flex w-full">
               {/* Search Icon */}
               <div className={`absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-300 ${isFocused ? 'scale-110' : ''}`}>
                 <Search size={20} />
@@ -73,11 +73,11 @@ const HeroSection = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className="w-full pl-12 pr-48 py-4 rounded-full bg-white/95 backdrop-blur-md text-gray-800 placeholder-gray-500 outline-none shadow-lg focus:ring-2 focus:ring-red-500 transition-all duration-300"
+                className="flex-grow pl-12 pr-48 py-4 rounded-full bg-white/95 backdrop-blur-md text-gray-800 placeholder-gray-500 outline-none shadow-lg focus:ring-2 focus:ring-red-500 transition-all duration-300"
               />
               
               {/* Location Dropdown */}
-              <div className="absolute right-24 top-1/2 -translate-y-1/2 border-l border-gray-200 pl-4">
+              <div className="absolute right-24 top-1/2 -translate-y-1/2 flex items-center border-l border-gray-200 pl-4">
                 <div className="flex items-center">
                   <MapPin size={18} className="text-gray-400 mr-2" />
                   <select

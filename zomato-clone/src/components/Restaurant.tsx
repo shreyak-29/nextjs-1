@@ -3,8 +3,6 @@ import { useRouter } from 'next/router';
 import Navbar from './Navbar';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000'; // Adjust based on your backend configuration
-
 // Define the type for a restaurant
 type RestaurantType = {
   id: string;
@@ -20,19 +18,34 @@ type RestaurantType = {
 const Restaurant = () => {
   const router = useRouter();
   const [restaurants, setRestaurants] = useState<RestaurantType[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<RestaurantType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedCuisine, setSelectedCuisine] = useState('');
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token); // Set to true if the token exists
+  }, []);
 
   // Fetch restaurants from API
   useEffect(() => {
     fetchRestaurants();
   }, []);
 
+  // Apply filters whenever location or cuisine changes
+  useEffect(() => {
+    applyFilters();
+  }, [selectedLocation, selectedCuisine, restaurants]);
+
   const fetchRestaurants = async () => {
     try {
       const response = await axios.get<RestaurantType[]>('/api/restaurants');
-      
       setRestaurants(response.data);
+      setFilteredRestaurants(response.data);
       setLoading(false);
     } catch (err) {
       setError('Failed to fetch restaurants');
@@ -40,11 +53,29 @@ const Restaurant = () => {
     }
   };
 
+  const applyFilters = () => {
+    let filtered = restaurants;
+
+    if (selectedLocation) {
+      filtered = filtered.filter((restaurant) => restaurant.location === selectedLocation);
+    }
+
+    if (selectedCuisine) {
+      filtered = filtered.filter((restaurant) => restaurant.cuisine === selectedCuisine);
+    }
+
+    setFilteredRestaurants(filtered);
+  };
+
   const deleteRestaurant = async (id: string) => {
+    if (!isAuthenticated) return alert('Unauthorized access. Please log in.');
     if (window.confirm('Are you sure you want to delete this restaurant?')) {
       try {
-        await axios.delete(`/api/restaurants/${id}`);
-        // Fetch updated list
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Authentication token missing');
+        await axios.delete(`/api/restaurants/${id}`, {
+          headers: { 'x-auth-token': token },
+        });
         fetchRestaurants();
       } catch (err) {
         setError('Failed to delete restaurant');
@@ -62,20 +93,53 @@ const Restaurant = () => {
         <h1 className="text-4xl font-bold text-center mb-4 text-gray-900">
           Discover Great Restaurants
         </h1>
-        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+        <p className="text-center text-gray-600 mb-4 max-w-2xl mx-auto">
           Explore our curated selection of the finest dining establishments across the city
         </p>
-        <div className="flex justify-center pb-10">
-          <button
-            onClick={() => router.push('/add-restaurant')}
-            className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600"
+
+        {/* Show "Add Restaurant" button only if authenticated */}
+        {isAuthenticated && (
+          <div className="flex justify-center pb-10">
+            <button
+              onClick={() => router.push('/add-restaurant')}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700"
+            >
+              Add a New Restaurant
+            </button>
+          </div>
+        )}
+
+        {/* Filters Section */}
+        <div className="flex justify-center gap-4 mb-8">
+          <select
+            className="px-4 py-2 border rounded-md"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            Add a New Restaurant
-          </button>
+            <option value="">All Locations</option>
+            {[...new Set(restaurants.map((r) => r.location))].map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="px-4 py-2 border rounded-md"
+            value={selectedCuisine}
+            onChange={(e) => setSelectedCuisine(e.target.value)}
+          >
+            <option value="">All Cuisines</option>
+            {[...new Set(restaurants.map((r) => r.cuisine))].map((cuisine) => (
+              <option key={cuisine} value={cuisine}>
+                {cuisine}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {restaurants.map((restaurant) => (
+          {filteredRestaurants.map((restaurant) => (
             <div
               key={restaurant.id}
               className="group bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
@@ -132,27 +196,24 @@ const Restaurant = () => {
                   <span className="truncate">{restaurant.location}</span>
                 </div>
 
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => router.push(`/restaurant/${restaurant.id}`)}
-                    className="flex-1 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600"
-                  >
-                    View Details
-                  </button>
-                  <button
-                    onClick={() => router.push(`/edit/${restaurant.id}`)}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
+                {/* Show Edit/Delete buttons only if authenticated */}
+                {isAuthenticated && (
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => router.push(`/edit/${restaurant._id}`)}
+                      className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
+                    >
+                      Edit
+                    </button>
 
-                  <button
-                    onClick={() => deleteRestaurant(restaurant._id!)}
-                    className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
+                    <button
+                      onClick={() => deleteRestaurant(restaurant._id!)}
+                      className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

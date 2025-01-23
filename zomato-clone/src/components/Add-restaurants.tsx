@@ -1,7 +1,7 @@
+// AddRestaurant Component
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import axios, { AxiosError } from 'axios';
-
+import axios from 'axios';
 
 interface RestaurantForm {
   name: string;
@@ -39,16 +39,18 @@ const AddRestaurant = () => {
     }
 
     try {
-      // Convert rating to number for API
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Authentication token missing');
+
       const restaurantData = {
         ...newRestaurant,
         rating: parseFloat(newRestaurant.rating) || 0,
       };
 
-      // Send data to API
-      await axios.post('/api/restaurants', restaurantData);
+      await axios.post('/api/restaurants', restaurantData , {
+        headers: { 'x-auth-token': token },
+      });
 
-      // Reset form and redirect on success
       setNewRestaurant({
         name: '',
         description: '',
@@ -60,122 +62,83 @@ const AddRestaurant = () => {
 
       router.push('/restaurant');
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        // Handle Axios-specific error
-        setError(err.response?.data?.message || 'Failed to add restaurant. Please try again.');
-      } else if (err instanceof Error) {
-        // Handle generic JavaScript errors
-        setError(err.message);
-      } else {
-        // Handle unexpected error types
-        setError('An unexpected error occurred.');
-      }
-    } finally {
+      const errorMessage = axios.isAxiosError(err)
+        ? err.response?.data?.message || 'Failed to add restaurant.'
+        : 'An unexpected error occurred.';
+      
+      setError(errorMessage);
       setIsSubmitting(false);
     }
-  }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
           Add a New Restaurant
         </h1>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleFormSubmit} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Name"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={newRestaurant.name}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, name: e.target.value })}
-              required
-              disabled={isSubmitting}
-            />
-          </div>
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          {['name', 'description', 'image', 'rating', 'cuisine', 'location'].map((field) => {
+            const inputProps = {
+              placeholder: field.charAt(0).toUpperCase() + field.slice(1),
+              type: field === 'image' ? 'url' 
+                   : field === 'rating' ? 'number' 
+                   : 'text',
+              min: field === 'rating' ? '0' : undefined,
+              max: field === 'rating' ? '5' : undefined,
+              step: field === 'rating' ? '0.1' : undefined,
+              rows: field === 'description' ? 3 : undefined,
+            };
 
-          <div>
-            <textarea
-              placeholder="Description"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={newRestaurant.description}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, description: e.target.value })}
-              required
-              disabled={isSubmitting}
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <input
-              type="url"
-              placeholder="Image URL"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={newRestaurant.image}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, image: e.target.value })}
-              required
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div>
-            <input
-              type="number"
-              placeholder="Rating (e.g., 4.5)"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              min="0"
-              max="5"
-              step="0.1"
-              value={newRestaurant.rating}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, rating: e.target.value })}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div>
-            <input
-              type="text"
-              placeholder="Cuisine"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={newRestaurant.cuisine}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, cuisine: e.target.value })}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div>
-            <input
-              type="text"
-              placeholder="Location"
-              className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={newRestaurant.location}
-              onChange={(e) => setNewRestaurant({ ...newRestaurant, location: e.target.value })}
-              disabled={isSubmitting}
-            />
-          </div>
+            return (
+              <div key={field}>
+                {field === 'description' ? (
+                  <textarea
+                    {...inputProps}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={newRestaurant[field as keyof RestaurantForm]}
+                    onChange={(e) => setNewRestaurant({ ...newRestaurant, [field]: e.target.value })}
+                    required
+                    disabled={isSubmitting}
+                  />
+                ) : (
+                  <input
+                    {...inputProps}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={newRestaurant[field as keyof RestaurantForm]}
+                    onChange={(e) => setNewRestaurant({ ...newRestaurant, [field]: e.target.value })}
+                    required
+                    disabled={isSubmitting}
+                  />
+                )}
+              </div>
+            );
+          })}
 
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 disabled:bg-green-300 disabled:cursor-not-allowed"
             disabled={isSubmitting}
+            className="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 transition duration-300"
           >
             {isSubmitting ? 'Adding Restaurant...' : 'Add Restaurant'}
           </button>
-        </form>
 
-        <button
-          onClick={() => router.push('/restaurant')}
-          className="w-full mt-4 bg-gray-500 text-white py-2 rounded hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
+          <button
+            type="button"
+            onClick={() => router.push('/restaurant')}
+            disabled={isSubmitting}
+            className="w-full mt-4 py-3 px-4 bg-gray-500 text-white font-semibold rounded-md shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 transition duration-300"
+          >
+            Cancel
+          </button>
+        </form>
       </div>
     </div>
   );

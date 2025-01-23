@@ -1,5 +1,5 @@
-// routes/restaurantRoutes.js
 const express = require('express');
+const authMiddleware = require('../middleware/authMiddleware');
 const {
   getRestaurants,
   createRestaurant,
@@ -8,18 +8,15 @@ const {
   getRestaurantById
 } = require('../controllers/restaurantController');
 
-// Create the router
 const router = express.Router();
 
-// Define the routes
 router.route('/')
   .get(getRestaurants)
-  .post(createRestaurant);
+  .post(authMiddleware, createRestaurant);
 
 router.route('/:id')
   .get(getRestaurantById)
-  .put(updateRestaurant)
-  .delete(deleteRestaurant);
+  .put(authMiddleware, updateRestaurant)
+  .delete(authMiddleware, deleteRestaurant);
 
-// Export the router using CommonJS syntax
 module.exports = router;
