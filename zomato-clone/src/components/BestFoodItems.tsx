@@ -34,6 +34,15 @@ const BestFoodOptions = () => {
       name: "Pav Bhaji",
       image: "https://imgs.search.brave.com/rCVZ8408QkTRUS1AK23KrmiI3BKoeroCKhd8qXmshxk/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Y29va3dpdGhtYW5h/bGkuY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDE4LzA1L0Jl/c3QtUGF2LUJoYWpp/LVJlY2lwZS0xMjAw/eDE4MTguanBn",
     },
+    {
+      name: "Pasta",
+      image: "https://www.spicebangla.com/wp-content/uploads/2024/08/Spicy-Pasta-recipe-optimised-scaled.webp",
+    },
+    {
+      name: "Momos",
+      image: "https://www.thespruceeats.com/thmb/UnVh_-znw7ikMUciZIx5sNqBtTU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/steamed-momos-wontons-1957616-hero-01-1c59e22bad0347daa8f0dfe12894bc3c.jpg",
+    }
+
   ];
 
   return (
