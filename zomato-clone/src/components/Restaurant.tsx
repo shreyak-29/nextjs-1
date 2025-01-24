@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from './Navbar';
 import axios from 'axios';
+import Review from './ReviewSection';
 
 // Define the type for a restaurant
 type RestaurantType = {
@@ -219,6 +220,7 @@ const Restaurant = () => {
           ))}
         </div>
       </div>
+      <Review/>
     </div>
   );
 };

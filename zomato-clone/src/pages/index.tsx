@@ -4,7 +4,6 @@ import Features from '../components/Features';
 import Footer from '../components/Footer';
 import Explore from '../components/ExploreOptions';
 import BestFoodItems from '../components/BestFoodItems';
-import Review from './review';
 
 
 export default function Home() {
@@ -15,7 +14,6 @@ export default function Home() {
       <Features />
       <BestFoodItems/>
       <Explore />
-      <Review/>
       <Footer />
     </div>
   );
