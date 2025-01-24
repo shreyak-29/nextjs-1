@@ -80,7 +80,10 @@ const loginUser = async (req, res) => {
         console.error(err.message);  // More detailed logging
         return res.status(500).send('Server Error');
       }
-      res.status(200).json({ token });
+
+      res.status(201).json({ token, userName: user.name }); // Include user name in response
+      console.log({ token, userName: user.name });
+
     });
   } catch (err) {
     console.error(err.message);  // More detailed logging

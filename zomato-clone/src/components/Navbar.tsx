@@ -6,15 +6,19 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Track login status
+  const [userName, setUserName]= useState<string | null>(null); // Track login status
   const router = useRouter();
 
   // Check if the user is logged in by checking token in localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const name = localStorage.getItem('userName');
     if (token) {
       setIsLoggedIn(true); // User is logged in
+      setUserName(name);
     } else {
-      setIsLoggedIn(false); // User is not logged in
+      setIsLoggedIn(false);
+      setUserName(null); // User is not logged in
     }
 
     // Scroll event listener to change navbar style
@@ -34,8 +38,9 @@ const Navbar = () => {
   // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove the token
+    localStorage.removeItem('userName'); // Remove the token
     setIsLoggedIn(false); // Update the login state
-    router.push('/login'); // Redirect to login page
+    router.push('/'); // Redirect to login page
   };
 
   return (
@@ -110,13 +115,16 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center space-x-4">
           {isLoggedIn ? (
-            <button 
-              className="relative overflow-hidden bg-red-500 text-white px-6 py-2 rounded-md transform transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95"
-              onClick={handleLogout}
-            >
-              <span className="relative z-10">Logout</span>
-              <div className="absolute inset-0 bg-red-400 transform -translate-x-full transition-transform duration-300 hover:translate-x-0" />
-            </button>
+            <div className="flex items-center space-x-3">
+              <span className="text-gray-700 font-medium">{userName}</span>
+              <button
+                className="relative overflow-hidden bg-red-500 text-white px-6 py-2 rounded-md transform transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95"
+                onClick={handleLogout}
+              >
+                <span className="relative z-10">Logout</span>
+                <div className="absolute inset-0 bg-red-400 transform -translate-x-full transition-transform duration-300 hover:translate-x-0" />
+              </button>
+            </div>
           ) : (
             <button
               className="relative overflow-hidden bg-red-500 text-white px-6 py-2 rounded-md transform transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95"
