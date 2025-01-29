@@ -5,42 +5,40 @@ import Link from 'next/link';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Track login status
-  const [userName, setUserName]= useState<string | null>(null); // Track login status
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
 
-  // Check if the user is logged in by checking token in localStorage
+  // Check login status and handle scroll
   useEffect(() => {
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('userName');
-    if (token) {
-      setIsLoggedIn(true); // User is logged in
-      setUserName(name);
-    } else {
-      setIsLoggedIn(false);
-      setUserName(null); // User is not logged in
-    }
+    setIsLoggedIn(!!token);
+    setUserName(name);
 
-    // Scroll event listener to change navbar style
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Define navigation items with corresponding routes
+  // Navigation items
   const navItems = [
     { name: 'Home', route: '/' },
-    { name: 'Restaurant', route: '/restaurant' }, // New Restaurant page link
+    { name: 'Restaurant', route: '/restaurant' },
   ];
 
-  // Handle Logout
+  // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the token
-    localStorage.removeItem('userName'); // Remove the token
-    setIsLoggedIn(false); // Update the login state
-    router.push('/'); // Redirect to login page
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    setIsLoggedIn(false);
+    router.push('/');
+  };
+
+  // Close mobile menu when a nav item is clicked
+  const handleNavItemClick = (route: string) => {
+    setIsOpen(false);
+    router.push(route);
   };
 
   return (
@@ -48,90 +46,102 @@ const Navbar = () => {
       fixed top-0 w-full z-50 transition-all duration-300
       ${scrolled ? 'bg-white/95 backdrop-blur-sm shadow-lg' : 'bg-white'}
     `}>
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center relative">
+        {/* Logo */}
         <div className="flex items-center space-x-2">
-          <div className="text-2xl font-bold text-red-500 transition-transform duration-300 hover:scale-105">
-          <Link href={"/"}>
+          <Link href="/" className="text-2xl font-bold text-red-500 transition-transform duration-300 hover:scale-105">
             Zomato-Clone
           </Link>
-          </div>
         </div>
 
+        {/* Mobile Menu Toggle */}
         <button
-          className="block md:hidden relative w-6 h-6 text-gray-700"
+          className="md:hidden absolute right-4 z-60 w-8 h-8 flex flex-col justify-center items-center"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
-          <div className={`
-            absolute w-6 h-0.5 bg-gray-700 transform transition-all duration-300
-            ${isOpen ? 'rotate-45 translate-y-0' : '-translate-y-1'}
+          <span className={`
+            block w-6 h-0.5 bg-gray-700 transform transition-all duration-300
+            ${isOpen ? 'rotate-45 translate-y-1' : '-translate-y-1'}
           `}/>
-          <div className={`
-            absolute w-6 h-0.5 bg-gray-700 transform transition-all duration-300
+          <span className={`
+            block w-6 h-0.5 bg-gray-700 my-1 transition-all duration-300
             ${isOpen ? 'opacity-0' : 'opacity-100'}
           `}/>
-          <div className={`
-            absolute w-6 h-0.5 bg-gray-700 transform transition-all duration-300
-            ${isOpen ? '-rotate-45 translate-y-0' : 'translate-y-1'}
+          <span className={`
+            block w-6 h-0.5 bg-gray-700 transform transition-all duration-300
+            ${isOpen ? '-rotate-45 -translate-y-1' : 'translate-y-1'}
           `}/>
         </button>
 
-        <ul className={`
-          ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 md:translate-y-0 md:opacity-100'}
-          absolute md:relative top-full left-0 w-full md:w-auto
-          bg-white md:bg-transparent shadow-lg md:shadow-none
-          transform transition-all duration-300 ease-in-out
-          md:flex md:space-x-8 text-gray-700
-          z-40 p-4 md:p-0
+        {/* Navigation Menu */}
+        <div className={`
+          fixed md:static top-0 left-0 w-full h-full md:h-auto
+          bg-white md:bg-transparent z-50 transition-all duration-300
+          ${isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+          flex flex-col md:flex-row justify-center md:justify-end items-center
         `}>
-          {navItems.map(({ name, route }) => (
-            <li
-              key={name}
-              className="relative group mb-2 md:mb-0"
-              onClick={() => router.push(route)} // Redirect to the specified route
-            >
-              <a
-                className={`
-                  block py-2 md:py-1 px-3 md:px-0
-                  transition-colors duration-300
-                  hover:text-red-500 cursor-pointer
-                  ${router.pathname === route ? 'text-red-500' : 'text-gray-700'}
-                `}
+          <ul className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-2">
+            {navItems.map(({ name, route }) => (
+              <li 
+                key={name} 
+                className="text-center"
+                onClick={() => handleNavItemClick(route)}
               >
-                {name}
-              </a>
-              <div
-                className={`
-                  absolute bottom-0 left-0 w-full h-0.5
-                  transform scale-x-0 group-hover:scale-x-100
-                  transition-transform duration-300
-                  bg-red-500
-                  ${router.pathname === route ? 'scale-x-100' : ''}
-                `}
-              />
-            </li>
-          ))}
-        </ul>
+                <a 
+                  className={`
+                    text-lg md:text-base py-2 px-4
+                    ${router.pathname === route ? 'text-red-500' : 'text-gray-700'}
+                    hover:text-red-500 transition-colors duration-300
+                  `}
+                >
+                  {name}
+                </a>
+              </li>
+            ))}
 
+            {/* Mobile Login/Logout */}
+            <li className="md:hidden mt-4">
+              {isLoggedIn ? (
+                <div className="flex flex-col items-center space-y-3">
+                  <span className="text-gray-700 font-medium">{userName}</span>
+                  <button 
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => router.push('/login')}
+                  className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
+                >
+                  Login
+                </button>
+              )}
+            </li>
+          </ul>
+        </div>
+
+        {/* Desktop Login/Logout */}
         <div className="hidden md:flex items-center space-x-4">
           {isLoggedIn ? (
             <div className="flex items-center space-x-3">
               <span className="text-gray-700 font-medium">{userName}</span>
               <button
-                className="relative overflow-hidden bg-red-500 text-white px-6 py-2 rounded-md transform transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95"
+                className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
                 onClick={handleLogout}
               >
-                <span className="relative z-10">Logout</span>
-                <div className="absolute inset-0 bg-red-400 transform -translate-x-full transition-transform duration-300 hover:translate-x-0" />
+                Logout
               </button>
             </div>
           ) : (
             <button
-              className="relative overflow-hidden bg-red-500 text-white px-6 py-2 rounded-md transform transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95"
+              className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
               onClick={() => router.push('/login')}
             >
-              <span className="relative z-10">Login</span>
-              <div className="absolute inset-0 bg-red-400 transform -translate-x-full transition-transform duration-300 hover:translate-x-0" />
+              Login
             </button>
           )}
         </div>

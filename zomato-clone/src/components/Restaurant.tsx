@@ -90,7 +90,7 @@ const Restaurant = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto px-4 py-12 pt-16">
+      <div className="container mx-auto px-4 py-12 pt-24">
         <h1 className="text-4xl font-bold text-center mb-4 text-gray-900">
           Discover Great Restaurants
         </h1>
