@@ -22,6 +22,7 @@ const Restaurant = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('');
 
@@ -29,6 +30,17 @@ const Restaurant = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token); // Set to true if the token exists
+    
+    // Decode the token to check if the user is an admin
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT to get user data
+      setIsAdmin(decodedToken.isAdmin); // <-- Set `isAdmin` from token
+    }
+  }, []);
+
+   // Fetch restaurants from API
+   useEffect(() => {
+    fetchRestaurants();
   }, []);
 
   // Fetch restaurants from API
@@ -69,6 +81,7 @@ const Restaurant = () => {
 
   const deleteRestaurant = async (id: string) => {
     if (!isAuthenticated) return alert('Unauthorized access. Please log in.');
+    if (!isAdmin) return alert('Access denied. Admins only.');
     if (window.confirm('Are you sure you want to delete this restaurant?')) {
       try {
         const token = localStorage.getItem('token');
@@ -98,7 +111,7 @@ const Restaurant = () => {
         </p>
 
         {/* Show "Add Restaurant" button only if authenticated */}
-        {isAuthenticated && (
+        {isAuthenticated && isAdmin && (
           <div className="flex justify-center pb-10">
             <button
               onClick={() => router.push('/add-restaurant')}
@@ -197,7 +210,7 @@ const Restaurant = () => {
                 </div>
 
                 {/* Show Edit/Delete buttons only if authenticated */}
-                {isAuthenticated && (
+                {isAuthenticated && isAdmin &&(
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => router.push(`/edit/${restaurant._id}`)}
@@ -219,6 +232,7 @@ const Restaurant = () => {
           ))}
         </div>
       </div>
+      </Review>
     </div>
   );
 };

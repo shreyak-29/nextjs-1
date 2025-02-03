@@ -1,5 +1,6 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
+const isAdmin = require('../middleware/isAdmin');
+const isAuthenticated = require('../middleware/authMiddleware');
 const {
   getRestaurants,
   createRestaurant,
@@ -12,11 +13,11 @@ const router = express.Router();
 
 router.route('/')
   .get(getRestaurants)
-  .post(authMiddleware, createRestaurant);
+  .post(isAuthenticated, isAdmin, createRestaurant);  // Ensure user is authenticated before checking admin
 
 router.route('/:id')
   .get(getRestaurantById)
-  .put(authMiddleware, updateRestaurant)
-  .delete(authMiddleware, deleteRestaurant);
+  .put(isAuthenticated, isAdmin, updateRestaurant)
+  .delete(isAuthenticated, isAdmin, deleteRestaurant);
 
 module.exports = router;
