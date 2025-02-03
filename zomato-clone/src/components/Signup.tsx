@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import {useCookies} from 'react-cookie';
 
 const Signup = () => {
   const [name, setName] = useState(''); // Added name state
@@ -8,6 +9,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(['token']);
 
   // Handle the signup form submission
   const handleSignup = async (e: React.FormEvent) => {
@@ -31,8 +33,8 @@ const Signup = () => {
     const data = await response.json();
   
     if (response.ok) {
-      // Store token or redirect on successful signup
-      localStorage.setItem('token', data.token);
+      // Store token in cookie or redirect on successful signup
+      setCookie('token', data.token, { path: '/', maxAge: 3600 });
       router.push('/');
     } else {
       // Show error message if signup fails

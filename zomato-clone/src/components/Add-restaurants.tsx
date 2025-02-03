@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import {useCookies} from 'react-cookie';
 
 interface RestaurantForm {
   name: string;
@@ -26,6 +27,8 @@ const AddRestaurant = () => {
     location: '',
   });
 
+  const[cookies] = useCookies(['token']);
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -39,7 +42,7 @@ const AddRestaurant = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = cookies.token;
       if (!token) throw new Error('Authentication token missing');
 
       const restaurantData = {

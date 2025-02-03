@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import {useCookies} from 'react-cookie';
 
 interface RestaurantForm {
   name: string;
@@ -26,11 +27,13 @@ const EditRestaurant = () => {
   const router = useRouter();
   const { id } = router.query;
 
+  const [cookies] = useCookies(['token']);
+
   useEffect(() => {
     if (id) {
       const fetchRestaurant = async () => {
         try {
-          const token = localStorage.getItem('token');
+          const token = cookies.token;
           if (!token) throw new Error('Authentication token missing');
           const response = await axios.get(`/api/restaurants/${id}`, {
             headers: { 'x-auth-token': token },
@@ -42,7 +45,7 @@ const EditRestaurant = () => {
       };
       fetchRestaurant();
     }
-  }, [id]);
+  }, [id, cookies.token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -53,7 +56,7 @@ const EditRestaurant = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = cookies.token;
       if (!token) throw new Error('Authentication token missing');
       await axios.put(`/api/restaurants/${id}`, restaurant , {
         headers: { 'x-auth-token': token },

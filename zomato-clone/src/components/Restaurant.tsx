@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from './Navbar';
 import axios from 'axios';
 import Review from './ReviewSection';
+import { useCookies } from 'react-cookie';
 
 
 // Define the type for a restaurant
@@ -27,10 +28,11 @@ const Restaurant = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('');
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
 
   // Check authentication on component mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = cookies.token;
     setIsAuthenticated(!!token); // Set to true if the token exists
     
     console.log('isAuthenticated:', isAuthenticated);
@@ -89,7 +91,7 @@ const Restaurant = () => {
     if (!isAdmin) return alert('Access denied. Admins only.');
     if (window.confirm('Are you sure you want to delete this restaurant?')) {
       try {
-        const token = localStorage.getItem('token');
+        const token = cookies.token;
         if (!token) throw new Error('Authentication token missing');
         await axios.delete(`/api/restaurants/${id}`, {
           headers: { 'x-auth-token': token },
@@ -128,12 +130,13 @@ const Restaurant = () => {
         )}
 
         {/* Filters Section */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className='w-full sm:w-auto'>
           <select
             className="px-4 py-2 border rounded-md"
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-          >
+            >
             <option value="">All Locations</option>
             {[...new Set(restaurants.map((r) => r.location))].map((location) => (
               <option key={location} value={location}>
@@ -141,12 +144,14 @@ const Restaurant = () => {
               </option>
             ))}
           </select>
-
+          </div>
+          
+          <div className='w-full sm:w-auto'>
           <select
             className="px-4 py-2 border rounded-md"
             value={selectedCuisine}
             onChange={(e) => setSelectedCuisine(e.target.value)}
-          >
+            >
             <option value="">All Cuisines</option>
             {[...new Set(restaurants.map((r) => r.cuisine))].map((cuisine) => (
               <option key={cuisine} value={cuisine}>
@@ -154,6 +159,7 @@ const Restaurant = () => {
               </option>
             ))}
           </select>
+        </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

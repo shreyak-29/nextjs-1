@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import {useCookies} from 'react-cookie';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>('');
   const router = useRouter();
+  const [cookies, setCookie, removeCookie] = useCookies(['token',userName]);
 
   // Check login status and handle scroll
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const name = localStorage.getItem('userName');
+    const token = cookies.token;
+    const name = cookies.userName;
     setIsLoggedIn(!!token);
-    setUserName(name);
+    setUserName(name|| '');
 
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [cookies]);
 
   // Navigation items
   const navItems = [
@@ -29,8 +31,8 @@ const Navbar = () => {
 
   // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userName');
+    removeCookie('token', { path: '/' });
+    removeCookie('userName', { path: '/' });
     setIsLoggedIn(false);
     router.push('/');
   };

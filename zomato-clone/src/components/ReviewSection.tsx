@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Send, Loader2, Edit2 } from 'lucide-react';
+import {useCookies} from 'react-cookie';
 
 // Types
 interface Review {
@@ -20,16 +21,16 @@ const ReviewSection = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
   const [updatedContent, setUpdatedContent] = useState('');
-
+  const [cookies, setCookie] = useCookies(['token']);
   // Authentication Check
+  
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-  }, []);
+    setIsAuthenticated(!!cookies.token);
+  }, [cookies]);
 
   // Helper function for API headers
   const getHeaders = (): HeadersInit => {
-    const token = localStorage.getItem('token');
+    const token = cookies.token;
     return {
       'Content-Type': 'application/json',
       ...(token && { 'x-auth-token': token }),

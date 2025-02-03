@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router'; // For redirecting after successful login
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
 
 const Login = () => {
   const router = useRouter();
@@ -10,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [cookies, setCookie] = useCookies(['token']);
 
   // Handle input changes
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,8 +40,11 @@ const Login = () => {
       // Extract token from the response
       const { token } = response.data;
 
-      // Save the token to localStorage (or cookies)
-      localStorage.setItem('token', token);
+      // // Save the token to localStorage (or cookies)
+      // localStorage.setItem('token', token);
+
+      // Save the token to cookies
+      setCookie('token', token, { path: '/', maxAge: 3600 });
 
       // Redirect user to another page (e.g., dashboard, home page)
       router.push('/'); // Redirect to the restaurant page or dashboard
