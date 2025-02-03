@@ -42,6 +42,8 @@ router.post(
       const payload = {
         user: {
           id: user.id,
+          isAdmin: user.isAdmin, // Ensure this is included
+
         },
       };
 
@@ -75,7 +77,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, isAdmin } = req.body;
 
     try {
       // Check if the user already exists
@@ -93,6 +95,7 @@ router.post(
         name,
         email,
         password: hashedPassword,
+        isAdmin: isAdmin || false, // Set isAdmin to false if not provided
       });
 
       await user.save();
@@ -101,6 +104,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
+          isAdmin: user.isAdmin, // Ensure this is included
         },
       };
 

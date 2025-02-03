@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import Review from './ReviewSection';
 
+
 // Define the type for a restaurant
 type RestaurantType = {
   id: string;
@@ -32,12 +33,15 @@ const Restaurant = () => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token); // Set to true if the token exists
     
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('isAdmin:', isAdmin);
+    
     // Decode the token to check if the user is an admin
     if (token) {
       const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT to get user data
-      setIsAdmin(decodedToken.isAdmin); // <-- Set `isAdmin` from token
+      setIsAdmin(decodedToken.user.isAdmin); // <-- Set `isAdmin` from token
     }
-  }, []);
+  }, [isAuthenticated, isAdmin]);
 
    // Fetch restaurants from API
    useEffect(() => {
