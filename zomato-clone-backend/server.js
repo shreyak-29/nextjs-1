@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const reviewRoutes = require('./routes/reviewRoutes');
 const mongoose = require('mongoose');
 const restaurantRoutes = require('./routes/restaurantRoutes'); // Import the restaurant routes
+const path = require('path'); 
 
 
 dotenv.config();
@@ -15,9 +16,12 @@ connectDB();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));  // Handle form-data
 
 // Use auth routes
 app.use('/api/auth', authRoutes);
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));  // Serve uploaded images
 
 // Use review routes
 app.use('/api/reviews', reviewRoutes);

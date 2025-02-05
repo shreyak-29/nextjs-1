@@ -170,7 +170,7 @@ const Restaurant = () => {
             >
               <div className="relative h-48 sm:h-64 overflow-hidden bg-gray-200">
                 <img
-                  src={restaurant.image}
+                  src={restaurant.image.startsWith('http') ? restaurant.image : `http://localhost:5000${restaurant.image}`}
                   alt={restaurant.name}
                   className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
