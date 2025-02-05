@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const fs = require('fs');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
 const path = require('path');
 const isAdmin = require('../middleware/isAdmin');
 const isAuthenticated = require('../middleware/authMiddleware');
@@ -12,36 +13,51 @@ const {
   getRestaurantById
 } = require('../controllers/restaurantController');
 
+require('dotenv').config(); // Load environment variables
+
 const router = express.Router();
 
-// Ensure "uploads" directory exists
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // Create directory if it doesn't exist
-}
+// AWS S3 Configuration
+const s3 = new aws.S3({
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.BUCKET_REGION
+});
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Save files in the "uploads/" directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
+// Multer-S3 Storage Configuration
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET_NAME, // Your S3 Bucket Name
+    acl: 'public-read', // Make files publicly accessible
+    contentType: multerS3.AUTO_CONTENT_TYPE, // Automatically set the correct content type
+    key: (req, file, cb) => {
+      const fileName = `restaurant-images/${Date.now()}-${file.originalname}`;
+      cb(null, fileName);
+    }
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      return cb(new Error('Only images (JPG, JPEG, PNG) are allowed!'));
+    }
   }
 });
 
-const upload = multer({ storage }); // Initialize multer
-
-// Serve static files from "uploads" so images can be accessed
-router.use('/uploads', express.static(uploadDir));
-
+// Restaurant Routes
 router.route('/')
   .get(getRestaurants)
   .post(isAuthenticated, isAdmin, upload.single('image'), createRestaurant);
 
 router.route('/:id')
   .get(getRestaurantById)
-  .put(isAuthenticated, isAdmin, upload.single('image'), updateRestaurant) // Allow optional image update
+  .put(isAuthenticated, isAdmin, upload.single('image'), updateRestaurant)
   .delete(isAuthenticated, isAdmin, deleteRestaurant);
 
 module.exports = router;
